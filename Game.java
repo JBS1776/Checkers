@@ -24,7 +24,6 @@ public class Game extends JPanel implements java.io.Serializable{
  private Board board;
  private Tile previouslySelected;
  private String[] pieceDirs = new String[12];
- private Piece enPassant;
  private ArrayList<Tile> takeRed = new ArrayList<Tile>();
  private ArrayList<Tile> takeCyan = new ArrayList<Tile>();
  private ArrayList<String> moveList = new ArrayList<String>();
@@ -32,8 +31,6 @@ public class Game extends JPanel implements java.io.Serializable{
  private int turnCount; // different save
  private int maxSeconds = Integer.MAX_VALUE;
  private Color turnColor = Constants.colors[this.getTurnCount() & 1];
- private boolean currKingCheck; // different save
- private boolean castleProcessing; // different save
  private int time = Constants.TIME; // 15 * 60 = 900
  private int minutes;
  private int seconds;
@@ -152,12 +149,10 @@ public class Game extends JPanel implements java.io.Serializable{
  this.add(button);
  for (Tile[] til : board.getTiles()) {
   for (Tile s : til) {
-  s.setIcon(s.getImage());
   add(s);
   s.setBounds(s.getX(), s.getY(), Constants.TILEWIDTH, Constants.TILEHEIGHT);
   s.setOpaque(true);
   s.setBackground(s.getColor());
-  s.setIcon(s.getImage());
   s.setFocusable(false);
   ActionListener listener = new ActionListener() {
            @Override
@@ -189,14 +184,13 @@ public class Game extends JPanel implements java.io.Serializable{
                           Position pos = b.getPosition();
                           int y = pos.getY();
                           if (y == 0 || y == 7) {
-                            gw.setEnabled(false);
-                            //TODO promote to King
-                   }
-                 }
+                        	  tile.setImage(Constants.images[(turnCount + 1) & 1][1]);
+                        	  King king = new King(tile.getPiece().getId(), tile.getPiece().getColor(), tile.getPosition(), tile.getImage());
+                        	  tile.setPiece(king);
+                          }
+                        }
                         turnCount += 1;
                         turnColor = Constants.colors[turnCount & 1];
-                        takeCyan.clear();
-                        takeRed.clear();
                turnLabel.setText((((turnCount & 1) == 0) ? "Red's" : "Black's") + " turn to move!");
                turnCountLabel.setText("Turns passed: " + turnCount);
                g.setTime(Constants.TIME);
@@ -228,32 +222,13 @@ public class Game extends JPanel implements java.io.Serializable{
                     Piece p = previouslySelected.getPiece();
                     previouslySelected.deSelect(p.getPath(), g);
                     if (previouslySelected.getPiece().getPath().contains(b)) {
-                    // For Castling
-                      Position posPrev = previouslySelected.getPosition();
                       Position pos = b.getPosition();
-                      int posDiff = pos.getX() - posPrev.getX();
-                      Tile but1 = null;
-                      Tile but2 = null;
-                      String castlingComplete = "";
-                    if (p instanceof King && !p.getHasMoved()) {
-                        if (posDiff == 2 || posDiff == -2) {
-                          but1 = board.getTiles()[pos.getY()][(posDiff == 2) ? pos.getX() + 1 : pos.getX() - 2];
-                          but2 = board.getTiles()[pos.getY()][(posDiff == 2) ? pos.getX() - 1 : pos.getX() + 1];
-                          board.move(but1, but2, g);
-                          board.setPieces(g);
-                          // Pop Rook's move from list
-                          g.moveList.remove(g.moveList.size() - 1);
-                          castlingComplete = " Castling comptele!";
-                        }
-                        }
                     board.move(previouslySelected, b, g);
-                    g.moveList.set(g.moveList.size() - 1, g.moveList.get(g.moveList.size() - 1) + castlingComplete);
+                    g.moveList.set(g.moveList.size() - 1, g.moveList.get(g.moveList.size() - 1));
                     board.setPieces(g);
                     if (tile.getPiece() instanceof King) {
                         turnCount += 1;
                         turnColor = Constants.colors[turnCount & 1];
-                        takeCyan.clear();
-                        takeRed.clear();
                turnLabel.setText((((turnCount & 1) == 0) ? "Red's" : "Black's") + " turn to move!");
                turnCountLabel.setText("Turns passed: " + turnCount);
                g.setTime(Constants.TIME);
@@ -263,13 +238,16 @@ public class Game extends JPanel implements java.io.Serializable{
                           pos = tile.getPosition();
                           int y = pos.getY();
                           if (y == 0 || y == 7) {
-                        	  //TODO: For peasant to king
+                        	  tile.setImage(Constants.images[(turnCount + 1) & 1][1]);
+                        	  King king = new King(tile.getPiece().getId(), tile.getPiece().getColor(), tile.getPosition(), tile.getImage());
+                        	  g.getBoard().getPieces()[(turnCount + 1) & 1].remove(tile.getPiece());
+                        	  tile.setPiece(king);
+                        	  g.getBoard().getPieces()[(turnCount + 1) & 1].add(tile.getPiece());
+                        	  g.getBoard().setPieces(g);
                           }
                       }
                     turnCount += 1;
                     turnColor = Constants.colors[turnCount & 1];
-                    takeCyan.clear();
-                    takeRed.clear();
                turnLabel.setText((((turnCount & 1) == 0) ? "Red's" : "Black's") + " turn to move!");
                turnCountLabel.setText("Turns passed: " + turnCount);
                g.setTime(Constants.TIME);

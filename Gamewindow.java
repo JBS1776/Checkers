@@ -13,7 +13,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
 public class Gamewindow extends JFrame implements Runnable, java.io.Serializable{
-  private Gamewindow frame;
   private Game game;
   private static Timer timer = null;
   private static boolean isEnabled = false;
@@ -176,7 +175,7 @@ public class Gamewindow extends JFrame implements Runnable, java.io.Serializable
 			 }
 			 ImageIcon set = null;
 			 if (g.getSetting() < 3) {
-				 set = new ImageIcon(Constants.names[g.getSetting()][val], p.getName());
+				 set = new ImageIcon(Constants.names[g.getTurnCount() & 1][val], p.getName());
 			 }
 			 else {
 				 //String[] names = g.getPieceDirs();
@@ -191,7 +190,7 @@ public class Gamewindow extends JFrame implements Runnable, java.io.Serializable
 				 // Load first default config. if images are not found
 				 if (!found) {
 					 g.setSetting(0);
-					 set = new ImageIcon(Constants.names[g.getSetting()][val], p.getName());
+					 set = new ImageIcon(Constants.names[g.getTurnCount() & 1][val], p.getName());
 				 }
 				 //set = new ImageIcon(Constants.customFiles[c.equals(Color.black) ? val : val + 6], p.getName());
 			 }
@@ -202,7 +201,6 @@ public class Gamewindow extends JFrame implements Runnable, java.io.Serializable
 		 for (Tile tb : tils) {
 			 if (tb.getPiece() != null) {
 				 tb.setImage(tb.getPiece().getImage());
-				 tb.setIcon(tb.getImage());
 			 }
 		 }
 	 }

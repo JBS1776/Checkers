@@ -8,22 +8,12 @@ public class Board implements Serializable{
 
 private ArrayList<Piece>[] pieces = new ArrayList[2];
 private HashMap<Piece, ArrayList<Tile>> take = new HashMap<Piece, ArrayList<Tile>>();
-private ArrayList<Piece>[] removedPieces = new ArrayList[2];
 private Tile[][] tiles = new Tile[8][8];
 private int[][] maxPieceIds = new int[2][2];
-private boolean windowDisplayed = false;
 public Board() {
   for (int i = 0; i < 2; i++) {
     pieces[i] = new ArrayList<Piece>();
   }
-}
-private class Duple {
-	  Tile button;
-	  boolean isRemoved;
-	  public Duple(Tile button, boolean isRemoved) {
-	    this.button = button;
-	    this.isRemoved = isRemoved;
-	  }
 }
 Tile[][] fillTiles(int startX, int startY, int setting) {
 Tile[][] tis = this.tiles;
@@ -109,18 +99,18 @@ Tile[][] fillTiles2(int startX, int startY, int setting, ArrayList<Piece>[] lis)
 	}
 void setPieces(Game g) {
 	  for (int i = 0; i < this.pieces.length; i++) {
-	  for (Piece p : this.pieces[i]) {
-		  if (p instanceof Peasant)
-			  this.maxPieceIds[i][0] = Math.max(this.maxPieceIds[i][0], p.getId());
-		  if (p instanceof King)
-			  this.maxPieceIds[i][1] = Math.max(this.maxPieceIds[i][1], p.getId());
-	    p.getPath().clear();
-	    Position pos = p.getPosition();
-	    int x = pos.getX();
-	    int y = pos.getY();
-	    p.setPath(g, g.getBoard().tiles[y][x]);
-	  }
-	  }
+		  for (Piece p : this.pieces[i]) {
+			  if (p instanceof Peasant)
+				  this.maxPieceIds[i][0] = Math.max(this.maxPieceIds[i][0], p.getId());
+			  if (p instanceof King)
+				  this.maxPieceIds[i][1] = Math.max(this.maxPieceIds[i][1], p.getId());
+			  p.getPath().clear();
+			  Position pos = p.getPosition();
+			  int x = pos.getX();
+			  int y = pos.getY();
+			  p.setPath(g, g.getBoard().tiles[y][x]);
+	  		}
+	  	}
 	  }
 void move(Tile prev, Tile next, Game g) {
 	  int currTurn = g.getTurnCount();
@@ -130,45 +120,18 @@ void move(Tile prev, Tile next, Game g) {
 	  Position pos = next.getPosition();
 	  if (q != null) {
 		g.getMoveList().add((g.getMoveList().size() + 1) + ". " + p.getName() + p.getId() + ": " + posPrev + " X " + pos);
-	    p.setHasMoved(true);
-	    next.setIcon(prev.getImage());
 	    next.setPiece(p);
 	    next.setImage(prev.getImage());
 	    next.getPiece().setPosition(pos);
-	    prev.setIcon(null);
 	    prev.setPiece(null);
 	    prev.setImage(null);
 	    this.pieces[(currTurn + 1) & 1].remove(q);
-	    g.getCapturedPieces().get(q.findIndex(Constants.colors[(currTurn + 1) & 1])).add(q);
 	  }
 	  else {
-	    if (p instanceof Peasant) {
-	      int posDiff = Math.abs(pos.getY() - posPrev.getY());
-	      if (posDiff == 2) {
-
-	      }
-	      else {
-	        int posDiffx = Math.abs(pos.getX() - posPrev.getX());
-	        int posDiffy = Math.abs(pos.getY() - posPrev.getY());
-	        if (posDiffx == 1 && posDiffy == 1) {
-	          Tile tb1 = this.tiles[pos.getY() - 1][pos.getX()];
-	          Tile tb2 = this.tiles[pos.getY() + 1][pos.getX()];
-	          Tile[] tils = {tb1, tb2};
-	          for (Tile but : tils) {
-	          but.setIcon(null);
-	          but.setPiece(null);
-	          but.setImage(null);
-	          }
-	        }
-	      }
-	    }
 		g.getMoveList().add((g.getMoveList().size() + 1) + ". " + p.getName() + p.getId() + ": " + posPrev + pos);
-	    p.setHasMoved(true);
-	    next.setIcon(prev.getImage());
 	    next.setPiece(p);
 	    next.setImage(prev.getImage());
 	    next.getPiece().setPosition(pos);
-	    prev.setIcon(null);
 	    prev.setPiece(null);
 	    prev.setImage(null);
 	  }

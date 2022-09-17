@@ -57,6 +57,7 @@ public class Tile extends JButton implements java.io.Serializable{
  }
  public void setImage(ImageIcon image) {
   this.image = image;
+  this.setIcon(image);
  }
  public ImageIcon getImage() {
   return this.image;
