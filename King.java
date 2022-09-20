@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
@@ -19,21 +20,64 @@ void setPath(Game g, Tile t) {
 	  int y = t.getPosition().getY();
 	  this.getPath().add(t);
 	  this.getAllies().clear();
-		  if (y - 1 >= 0 && x - 1 >= 0) {
-			  if (board.getTiles()[y - 1][x - 1].getPiece() == null)
-				  this.getPath().add(board.getTiles()[y - 1][x - 1]);
+	  this.getCapturePath().clear();
+	  for (Tile s : board.neighbors(t)) {
+		  int xdiff = s.getPosition().getX();
+		  int ydiff = s.getPosition().getY();
+		  if (s.getPiece() == null) {
+			  this.getPath().add(s);
 		  }
-		  if (y - 1 >= 0 && x + 1 < 8) {
-			  if (board.getTiles()[y - 1][x + 1].getPiece() == null)
-				  this.getPath().add(board.getTiles()[y - 1][x + 1]);
-		  }
-		  if (y + 1 < 8 && x + 1 < 8) {
-			  if (board.getTiles()[y + 1][x + 1].getPiece() == null)
-				  this.getPath().add(board.getTiles()[y + 1][x + 1]);
-		  }
-		  if (y + 1 < 8 && x - 1 >= 0) {
-			  if (board.getTiles()[y + 1][x - 1].getPiece() == null)
-				  this.getPath().add(board.getTiles()[y + 1][x - 1]);
-		  }
+	  }
+	  recursCapPath(g, t);
+	  this.getPath().addAll(this.getCapturePath());
+}
+ArrayList<Tile> setCapturePath(Game g, Tile b) {
+	ArrayList<Tile> tiles = new ArrayList<Tile>();
+	int x = b.getPosition().getX();
+	int y = b.getPosition().getY();
+	for (Tile s : g.getBoard().neighbors(b)) {
+		int xdiff = s.getPosition().getX();
+		int ydiff = s.getPosition().getY();
+		if (s.getPiece() != null) {
+				if (!s.getPiece().getColor().equals(g.getTurnColor())) {
+					if (x - xdiff == 1 && y - ydiff == 1) {
+						// Also must check for duplicates so we don't get stackbased overflow!!
+						if (xdiff - 1 >= 0 && ydiff - 1 >= 0 && g.getBoard().getTiles()[ydiff - 1][xdiff - 1].getPiece() == null 
+								&& !this.getCapturePath().contains(g.getBoard().getTiles()[ydiff - 1][xdiff - 1]))
+							tiles.add(g.getBoard().getTiles()[ydiff - 1][xdiff - 1]);
+					}
+					if (x - xdiff == -1 && y - ydiff == 1) {
+						if (xdiff + 1 < 8 && ydiff - 1 >= 0 && g.getBoard().getTiles()[ydiff - 1][xdiff + 1].getPiece() == null
+								&& !this.getCapturePath().contains(g.getBoard().getTiles()[ydiff - 1][xdiff + 1]))
+							tiles.add(g.getBoard().getTiles()[ydiff - 1][xdiff + 1]);
+						}
+					if (x - xdiff == 1 && y - ydiff == -1) {
+						if (xdiff - 1 >= 0 && ydiff + 1 < 8 && g.getBoard().getTiles()[ydiff + 1][xdiff - 1].getPiece() == null
+								&& !this.getCapturePath().contains(g.getBoard().getTiles()[ydiff + 1][xdiff - 1]))
+							tiles.add(g.getBoard().getTiles()[ydiff + 1][xdiff - 1]);
+					}
+					if (x - xdiff == -1 && y - ydiff == -1) {
+						if (xdiff + 1 < 8 && ydiff + 1 < 8 && g.getBoard().getTiles()[ydiff + 1][xdiff + 1].getPiece() == null
+								&& !this.getCapturePath().contains(g.getBoard().getTiles()[ydiff + 1][xdiff + 1]))
+							tiles.add(g.getBoard().getTiles()[ydiff + 1][xdiff + 1]);
+					}
+				}
+		}
 	}
+	this.getCapturePath().addAll(tiles);
+	return tiles;
+	}
+// Yep had to use recursion here as we have to account for multiple directions!
+private void recursCapPath(Game g, Tile b) {
+	ArrayList<Tile> caps = this.getCapturePath();
+	ArrayList<Tile> adds = this.setCapturePath(g, b);
+	if (adds.isEmpty()) {
+		return;
+	}
+	else {
+		for (Tile t : adds) {
+			recursCapPath(g, t);
+		}
+	}
+}
 }

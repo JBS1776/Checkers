@@ -65,6 +65,32 @@ public class Tile extends JButton implements java.io.Serializable{
  public Piece getPiece() {
   return this.piece;
  }
+ public boolean onBoard() {
+	  if (this.getX() >= 0 && this.getX() < 8 && this.getY() >= 0 && this.getY() < 8)
+		  return true;
+	  return false;
+	 }
+ public Tile NW() {
+	  if (this.onBoard()) {
+		  return new Tile(this.getWidth(), this.getHeight(), this.getX() - 1, this.getY() - 1, this.getColor(), this.getPiece());
+	  }
+	  return null;
+	 }
+public Tile NE() {
+	  if (this.onBoard())
+		  return new Tile(this.getWidth(), this.getHeight(), this.getX() + 1, this.getY() - 1, this.getColor(), this.getPiece());
+	  return null;
+	 }
+public Tile SW() {
+	  if (this.onBoard())
+		  return new Tile(this.getWidth(), this.getHeight(), this.getX() - 1, this.getY() + 1, this.getColor(), this.getPiece());
+	  return null;
+	 }
+public Tile SE() {
+	  if (this.onBoard())
+		  return new Tile(this.getWidth(), this.getHeight(), this.getX() + 1, this.getY() + 1, this.getColor(), this.getPiece());
+	  return null;
+	 }
 void select(ArrayList<Tile> tiles) {
      for (Tile t : tiles) {
        t.setBackground(Constants.HIGHLIGHTER);

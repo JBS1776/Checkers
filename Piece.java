@@ -15,6 +15,7 @@ public abstract class Piece implements java.io.Serializable{
  private String name;
  private ArrayList<Tile> path = new ArrayList<Tile>();
  private ArrayList<Tile> allies = new ArrayList<Tile>();
+ private ArrayList<Tile> capturePath = new ArrayList<Tile>();
  public Piece(int id, Color color, Position pos, ImageIcon image) {
 	 this.id = id;
 	 this.color = color;
@@ -44,6 +45,9 @@ public abstract class Piece implements java.io.Serializable{
  public ArrayList<Tile> getPath() {
 	  return this.path;
  }
+ public ArrayList<Tile> getCapturePath() {
+	 return this.capturePath;
+ }
  void setPath(Game g, Tile b) {
 	   if (b.getPiece() instanceof Peasant) {
 	     Peasant pawn = (Peasant) b.getPiece();
@@ -52,8 +56,19 @@ public abstract class Piece implements java.io.Serializable{
 	   if (b.getPiece() instanceof King) {
 	     King king = (King) b.getPiece();
 	     king.setPath(g, b);
+	   } 
+ }
+ArrayList<Tile> setCapturePath(Game g, Tile b) {
+	   if (b.getPiece() instanceof Peasant) {
+		   Peasant pawn = (Peasant) b.getPiece();
+		   pawn.setCapturePath(g, b);
 	   }
-	 }
+	   if (b.getPiece() instanceof King) {
+		   King king = (King) b.getPiece();
+		   king.setCapturePath(g, b);
+	   }
+	   return this.getCapturePath();
+ }
  public ArrayList<Tile> getAllies() {
 	 return this.allies;
  }

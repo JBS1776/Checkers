@@ -135,6 +135,7 @@ void move(Tile prev, Tile next, Game g) {
 	    prev.setPiece(null);
 	    prev.setImage(null);
 	  }
+	  g.setTurnColor(Constants.colors[(currTurn + 1) & 1]);
 	}
 void clearPaint(Game g) {
     for (Tile[] tis : g.getBoard().tiles)
@@ -153,6 +154,24 @@ private ArrayList<Tile> intersection(ArrayList<Tile> a, ArrayList<Tile> b) {
     }
     return lis;
   }
+ArrayList<Tile> neighbors(Tile t) {
+	ArrayList<Tile> tiles = new ArrayList<Tile>();
+	int x = t.getPosition().getX();
+	int y = t.getPosition().getY();
+	if (x - 1 >= 0 && y - 1 >= 0) {
+		tiles.add(this.getTiles()[y - 1][x - 1]);
+	}
+	if (x - 1 >= 0 && y + 1 < 8) {
+		tiles.add(this.getTiles()[y + 1][x - 1]);
+	}
+	if (x + 1 < 8 && y - 1 >= 0) {
+		tiles.add(this.getTiles()[y - 1][x + 1]);
+	}
+	if (x + 1 < 8 && y + 1 < 8) {
+		tiles.add(this.getTiles()[y + 1][x + 1]);
+	}
+	return tiles;
+}
 Piece getRandomPiece(Game g, Color c) {
 	int index = c.equals(Constants.colors[0]) ? 0 : 1;
 	int randPiece = Constants.rand.nextInt(g.getBoard().pieces[index].size());

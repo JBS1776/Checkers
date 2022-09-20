@@ -34,7 +34,7 @@ public class Position implements java.io.Serializable{
   return y;
  }
  public boolean onBoard() {
-  if (this.getX() >= 0 && this.getX() <= 8 && this.getY() > 0 && this.getY() <= 8)
+  if (this.getX() >= 0 && this.getX() < 8 && this.getY() >= 0 && this.getY() < 8)
    return true;
   return false;
  }
@@ -46,34 +46,14 @@ public class Position implements java.io.Serializable{
   }
   return null;
  }
- public Position N() {
-  if (this.onBoard())
-  return new Position(x, y - 1);
-  return null;
- }
  public Position NE() {
   if (this.onBoard())
   return new Position(x + 1, y - 1);
   return null;
  }
- public Position W() {
-  if (this.onBoard())
-  return new Position(x - 1, y);
-  return null;
- }
- public Position E() {
-  if (this.onBoard())
-  return new Position(x + 1, y);
-  return null;
- }
  public Position SW() {
   if (this.onBoard())
   return new Position(x - 1, y + 1);
-  return null;
- }
- public Position S() {
-  if (this.onBoard())
-  return new Position(x, y + 1);
   return null;
  }
  public Position SE() {
@@ -82,7 +62,7 @@ public class Position implements java.io.Serializable{
   return null;
  }
  public List<Position> neighbors() {
-  Position[] nbors = {NW(), N(), NE(), W(), E(), SW(), S(), SE()};
+  Position[] nbors = {NW(), NE(), SW(), SE()};
   List<Position> nayghbors = new ArrayList<Position>();
   for (Position places : nbors) {
    nayghbors.add(places);

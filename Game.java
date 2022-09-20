@@ -160,6 +160,7 @@ public class Game extends JPanel implements java.io.Serializable{
                Object source = e.getSource();
                if (source instanceof Tile) {
                 Tile b = ((Tile)source);
+                //System.out.println(b.getPosition());
                 //System.out.println(b.getPiece().getName());
                 if (ailevel > 0 && !g.getGameEnded()) {
                 	if (ailevel >= 3 || (turnCount & 1) == aiColor) {
@@ -321,6 +322,9 @@ public class Game extends JPanel implements java.io.Serializable{
   }
   public Color getTurnColor() {
     return this.turnColor;
+  }
+  public void setTurnColor(Color c) {
+	  this.turnColor = c;
   }
   public Board getBoard() {
     return this.board;
